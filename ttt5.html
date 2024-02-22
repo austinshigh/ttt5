@@ -1,0 +1,142 @@
+<!-- https://austinshigh.github.io/ttt5/ttt5.html -->
+
+<!DOCTYPE html>
+<head>
+    <title>Tic Tac Toe Assignment Part 4</title>
+    <style type="text/css">
+		#grid{display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; width: 315px;}
+		.square {text-align: center; width: 100px; height: 100px; margin: 5px; border: 1px; border-color: black; border-style: solid; font-size: 85px;}
+        .square:hover{background-color: yellow;}
+        .turn{border: 1px; border-color: black; border-style: solid; width: 100px;}
+        #winBox{border: 1px; border-color: black; border-style: solid; width: 100px;}
+        .hide{display: none;}
+        .disable{pointer-events: none;}
+	</style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+    <button id="startGame">Start Game</button>
+    <div id="turnBox" class="turn">X's turn</div>
+    <div id="winBox">Winner: </div>
+    <div id="selected"></div>
+</body>
+<script> 
+
+    const NUM_SQUARES = 9;
+
+    let squareIds = [`sq0`,'sq1','sq2','sq3','sq4','sq5','sq6','sq7','sq8'];
+
+    // return text value in each square
+    const getSquareValues = (id) => {
+        let value = $(`#${id}`).text();
+        if (value === "X"){
+            return "X";
+        }else if (value === "O"){
+            return "O";
+        }else{
+            return "-";
+        }
+    }
+
+    // check if there is a winner and end game if so
+    const determineWinner = (moves) => {
+        const winConditions = [
+            moves[0] + moves[1] + moves[2],
+            moves[3] + moves[4] + moves[5],
+            moves[6] + moves[7] + moves[8],
+            moves[0] + moves[3] + moves[6],
+            moves[1] + moves[4] + moves[7],
+            moves[2] + moves[5] + moves[8],
+            moves[0] + moves[4] + moves[8],
+            moves[2] + moves[4] + moves[6],
+        ]
+        winConditions.forEach((condition) => {
+            if (condition.split("X").length - 1 === 3){
+                winBox.text("Winner: X");
+                $('#grid').addClass("disable");
+                turnBox.hide();
+            }else if (condition.split("O").length - 1 === 3){
+                winBox.text("Winner: O");
+                $('#grid').addClass("disable");
+                turnBox.hide();
+            }else{
+                let staleMateFound = true;
+                moves.forEach((condition) => {
+                    if (condition.includes('-')){
+                        staleMateFound = false;
+                    }
+                });
+                if (staleMateFound){
+                    winBox.text("StaleMate!");
+                    $('#grid').addClass("disable");
+                    turnBox.hide();
+                }
+            }
+        })
+    }
+
+    document.write( "<div id='grid'>");
+    for (i=0; i<NUM_SQUARES; i++)
+    {
+        id = "sq"+i;
+        document.write( "<div class='square' id='" + id + "'></div>" );
+    }
+    document.write( "</div>");
+
+    // select turn box
+    const turnBox = $("#turnBox");
+
+    // select selection box
+    const selectionBox = $("#selected");
+
+    // select win box
+    const winBox = $("#winBox");
+
+    const startGame = () => {
+        // set initial player to random
+        let xTurn = Math.random() < 0.5;
+
+        if (xTurn){
+            turnBox.text("X'S Turn");
+        }else{
+            turnBox.text("O's Turn");
+        }
+
+        for (let i = 0; i < NUM_SQUARES; i++) {
+            let square = $(`#sq${i}`);
+            square.on('click', () =>{
+                square.addClass("disable");
+                selectionBox.text(`${i}`);
+                if (xTurn){
+                    square.text("X");
+                    xTurn = false;
+                    turnBox.text("O'S Turn");
+                }else{
+                    square.text("O");
+                    xTurn = true;
+                    turnBox.text("X's Turn");
+                }
+                const moves = squareIds.map(getSquareValues);
+                determineWinner(moves);
+            });
+        }
+    }
+
+    // run game on page load
+    startGame();
+
+    // restart game when startGame is clicked
+    $("#startGame").on('click', () => {
+        selectionBox.text("");
+        grid.removeClass('disable');
+        winBox.text("Winner:")
+        turnBox.show();
+        $('.square').each((i, square) => {
+            $(square).removeClass("disable");
+            $(square).text("");
+        });
+        startGame();
+    });
+</script>
+</html>
