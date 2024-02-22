@@ -54,11 +54,11 @@
         winConditions.forEach((condition) => {
             if (condition.split("X").length - 1 === 3){
                 winBox.text("Winner: X");
-                $('#grid').addClass("disable");
+                $(grid).addClass("disable");
                 turnBox.hide();
             }else if (condition.split("O").length - 1 === 3){
                 winBox.text("Winner: O");
-                $('#grid').addClass("disable");
+                $(grid).addClass("disable");
                 turnBox.hide();
             }else{
                 let staleMateFound = true;
@@ -69,7 +69,7 @@
                 });
                 if (staleMateFound){
                     winBox.text("StaleMate!");
-                    $('#grid').addClass("disable");
+                    $(grid).addClass("disable");
                     turnBox.hide();
                 }
             }
@@ -129,7 +129,7 @@
     // restart game when startGame is clicked
     $("#startGame").on('click', () => {
         selectionBox.text("");
-        grid.removeClass('disable');
+        $(grid).removeClass('disable');
         winBox.text("Winner:")
         turnBox.show();
         $('.square').each((i, square) => {
